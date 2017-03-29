@@ -18,16 +18,23 @@ import org.json.JSONObject;
  * Created by thekten on 29/03/17.
  */
 
+    /*
+     * Our own Adapter used to hydrate the RecyclerView in MainActivity
+     */
+
 public class PicAdapter extends RecyclerView.Adapter<PicAdapter.PicAdapterViewHolder> {
 
     private Context mContext;
     private JSONArray mResultArray;
+    final private String APIKey = "AIzaSyCcamaf8p3N2xGXEtuJSe_AAEFFkETnuac";
 
+    // Storing variable from MainActivity
     public PicAdapter(Context context, JSONArray resultArray) {
         mContext = context;
         mResultArray = resultArray;
     }
 
+    // On create, we inflate the layout and return our own ViewHolder
     @Override
     public PicAdapterViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(mContext);
@@ -38,6 +45,8 @@ public class PicAdapter extends RecyclerView.Adapter<PicAdapter.PicAdapterViewHo
     @Override
     public void onBindViewHolder(PicAdapterViewHolder holder, int position) {
 
+        // We extract the label and the photo reference from JSON, build our URL, and use Picasso to display it in to our ImageView
+        // I used Picasso for performance and simplicity (caching Bitmap mostly)
         try {
             JSONObject element = mResultArray.getJSONObject(position);
             if (element.has("photos")) {
@@ -45,7 +54,7 @@ public class PicAdapter extends RecyclerView.Adapter<PicAdapter.PicAdapterViewHo
                 JSONArray photoArray = element.getJSONArray("photos");
                 JSONObject photo = photoArray.getJSONObject(0);
                 String reference = photo.getString("photo_reference");
-                String imgUrl = "https://maps.googleapis.com/maps/api/place/photo?maxheight=400&photoreference=" + reference + "&key=AIzaSyCcamaf8p3N2xGXEtuJSe_AAEFFkETnuac";
+                String imgUrl = "https://maps.googleapis.com/maps/api/place/photo?maxheight=400&photoreference=" + reference + "&key=" + APIKey;
                 Picasso.with(mContext).load(imgUrl).into(holder.picImageView);
                 holder.labelTextView.setText(name);
             }
