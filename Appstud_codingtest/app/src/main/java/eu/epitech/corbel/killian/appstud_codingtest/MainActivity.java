@@ -28,9 +28,8 @@ public class MainActivity extends AppCompatActivity {
       private RecyclerView mRecyclerView;
       private SwipeRefreshLayout mSwipeContainer;
       private Context mContext;
-      private double mLongitude;
-      private double mLatitude;
       final private String APIKey = "AIzaSyCcamaf8p3N2xGXEtuJSe_AAEFFkETnuac";
+      private String mQuery;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,11 +49,9 @@ public class MainActivity extends AppCompatActivity {
         LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
         try {
             Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            mLongitude = location.getLongitude();
-            mLatitude = location.getLatitude();
+            mQuery = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?key=" + APIKey + "&location="+ location.getLatitude() + "," + location.getLongitude() + "&radius=2000&type=bar";
         } catch (SecurityException e) {
-            mLongitude = 1.444195;
-            mLatitude = 43.599156;
+            mQuery = "https://maps.googleapis.com/maps/api/place/textsearch/json?key=" + APIKey + "&query=Toulouse&radius=2000&type=bar";
         }
 
         // AsyncTask used for internet requests
@@ -69,11 +66,9 @@ public class MainActivity extends AppCompatActivity {
                 LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
                 try {
                     Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                    mLongitude = location.getLongitude();
-                    mLatitude = location.getLatitude();
+                    mQuery = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?key=" + APIKey + "&location="+ location.getLatitude() + "," + location.getLongitude() + "&radius=2000&type=bar";
                 } catch (SecurityException e) {
-                    mLongitude = 1.444195;
-                    mLatitude = 43.599156;
+                    mQuery = "https://maps.googleapis.com/maps/api/place/textsearch/json?key=" + APIKey + "&query=Toulouse&radius=2000&type=bar";
                 }
 
                 new DownloadPicTask().execute();
@@ -89,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
 
             try {
                 // Trying to connect to Google Places API
-                URL url = new URL("https://maps.googleapis.com/maps/api/place/nearbysearch/json?key=" + APIKey + "&location="+ String.valueOf(mLatitude) + "," + String.valueOf(mLongitude) + "&radius=2000&type=bar");
+                URL url = new URL(mQuery);
                 URLConnection connection = url.openConnection();
 
                 // We read the result and store in into a String variable
